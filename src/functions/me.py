@@ -13,7 +13,8 @@ from ..exceptions.InvalidAccessToken import InvalidAccessToken
 async def async_handler(event: Dict[str, Any], context: Any) -> HTTPResponse:
     try:
         request = parse_protected_event(event=event)
-        response = await MeController.handle(data=request)
+        controller = MeController()
+        response = await controller.handle(data=request)
         return parse_response(response=response)
     except AccessTokenNotProvided:
         return parse_response(response=unauthorized(body={"error": "Access token not provided."}))

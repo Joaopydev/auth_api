@@ -9,7 +9,8 @@ from ..utils.parse_response import parse_response
 
 async def async_handler(event: Dict[str, Any], context: Any) -> HTTPResponse:
     request = parse_event(event=event)
-    response = await SignupController.handle(body=request.get("body", {}))
+    controller = SignupController()
+    response = await controller.handle(body=request.get("body", {}))
     return parse_response(response=response)
 
 

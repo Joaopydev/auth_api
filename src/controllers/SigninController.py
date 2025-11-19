@@ -1,11 +1,11 @@
-from typing import Dict, AnyStr
+from typing import Dict, AnyStr, Optional
 from pydantic import BaseModel, ValidationError, EmailStr
 import bcrypt
 
 from ..db.connection import get_db
 from ..db.models.users import User
 from sqlalchemy import select
-
+from sqlalchemy.ext.asyncio import AsyncSession
 from ..lib.jwt import signin_access_token
 from ..app_types.http import HTTPResponse
 from ..utils.http import ok, bad_request, unauthorized
@@ -18,15 +18,20 @@ class EventSchema(BaseModel):
 
 class SigninController:
 
-    @staticmethod
-    async def handle(body: Dict[str, AnyStr]) -> HTTPResponse:
+    def __init__(self, session: Optional[AsyncSession]):
+        self.session = session or get_db
+
+    def _validate_body(self, body: Dict[str, AnyStr]) -> EventSchema:
+        return EventSchema(**body)
+    
+    async def handle(self, body: Dict[str, AnyStr]) -> HTTPResponse:
         try:
-            data = EventSchema(**body)
+            data = self._validate_body(body=body)
         except ValidationError as ex:
             return bad_request(body={"errors": ex.errors()})
         
         body = data.model_dump()
-        async with get_db() as db:
+        async with self.session() as db:
             query = select(User).where(User.email == body["email"])
             result = await db.execute(query)
             user = result.scalars().first()
