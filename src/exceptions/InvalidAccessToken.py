@@ -1,0 +1,2 @@
+class InvalidAccessToken(Exception):
+    pass

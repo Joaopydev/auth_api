@@ -1,0 +1,67 @@
+org: jonvibes
+service: server-api
+  
+provider:
+  name: aws
+  region: us-east-1
+  runtime: python3.11
+  architecture: x86_64
+  environment:
+    DATA_BASE_URL: ${env:DATA_BASE_URL}
+    SECRET_JWT_PRIVATE_KEY: ${env:SECRET_JWT_PRIVATE_KEY}
+    SECRET_JWT_PUBLIC_KEY: ${env:SECRET_JWT_PUBLIC_KEY}
+
+  # ecr:
+  #   images:
+  #     app-image:
+  #       path: ./
+  #       file: Dockerfile
+  #       provenance: false
+  #       platform: linux/amd64
+
+package:
+  individually: true
+
+build:
+  esbuild:
+    minify: true
+    sourcemap: true
+
+functions:
+  signin:
+    image:
+      uri: 553004107808.dkr.ecr.us-east-1.amazonaws.com/lambda-container:latest
+      command:
+        - src.functions.signin.handler
+    events:
+      - httpApi:
+          path: /signin
+          method: POST
+  signup:
+    image:
+      uri: 553004107808.dkr.ecr.us-east-1.amazonaws.com/lambda-container:latest
+      command:
+        - src.functions.signup.handler
+    events:
+      - httpApi:
+          path: /signup
+          method: POST
+
+  me:
+    image:
+      uri: 553004107808.dkr.ecr.us-east-1.amazonaws.com/lambda-container:latest
+      command:
+        - src.functions.me.handler
+    events:
+      - httpApi:
+          path: /me
+          method: GET
+            
+# Resources:
+#   MyEcrRepository:
+#     Type: AWS::ECR::Repository
+#     Properties:
+#       RepositoryName: lambda-container
+#       ImageScanningConfiguration:
+#         ScanOnPush: true
+#       ImageTagMutability: MUTABLE

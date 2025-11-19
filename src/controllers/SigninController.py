@@ -1,0 +1,45 @@
+from typing import Dict, AnyStr
+from pydantic import BaseModel, ValidationError, EmailStr
+import bcrypt
+
+from ..db.connection import get_db
+from ..db.models.users import User
+from sqlalchemy import select
+
+from ..lib.jwt import signin_access_token
+from ..app_types.http import HTTPResponse
+from ..utils.http import ok, bad_request, unauthorized
+
+
+class EventSchema(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class SigninController:
+
+    @staticmethod
+    async def handle(body: Dict[str, AnyStr]) -> HTTPResponse:
+        try:
+            data = EventSchema(**body)
+        except ValidationError as ex:
+            return bad_request(body={"errors": ex.errors()})
+        
+        body = data.model_dump()
+        async with get_db() as db:
+            query = select(User).where(User.email == body["email"])
+            result = await db.execute(query)
+            user = result.scalars().first()
+            if not user:
+                return unauthorized(body={"error": "Invalid Credentials."})
+            
+            is_valid_password = bcrypt.checkpw(
+                body.get("password").encode("utf-8"),
+                user.password
+            )
+            if not is_valid_password:
+                return unauthorized(body={"error": "Invalid Credentials."})
+            
+            access_token = signin_access_token(user_id=user.id)
+            
+            return ok(body={"access_token": access_token})
