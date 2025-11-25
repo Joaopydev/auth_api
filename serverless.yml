@@ -10,6 +10,7 @@ provider:
     DATA_BASE_URL: ${env:DATA_BASE_URL}
     SECRET_JWT_PRIVATE_KEY: ${env:SECRET_JWT_PRIVATE_KEY}
     SECRET_JWT_PUBLIC_KEY: ${env:SECRET_JWT_PUBLIC_KEY}
+    BUCKET_NAME: !Ref UploadsBucket
 
   # ecr:
   #   images:
@@ -56,7 +57,24 @@ functions:
       - httpApi:
           path: /me
           method: GET
+
+  createMeal:
+    image:
+      uri: 553004107808.dkr.ecr.us-east-1.amazonaws.com/lambda-container:latest
+      command:
+        - src.functions.create_meal.handler
+    events:
+      - httpApi:
+          path: /meals
+          method: POST
             
+resources:
+  Resources:
+    UploadsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+          BucketName: server-uploads-service
+          
 # Resources:
 #   MyEcrRepository:
 #     Type: AWS::ECR::Repository

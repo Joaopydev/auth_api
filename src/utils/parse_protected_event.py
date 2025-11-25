@@ -13,7 +13,7 @@ def parse_protected_event(event: Dict[str, Any]) -> ProtectedHttpRequest:
     if authorization is None:
         raise AccessTokenNotProvided()
 
-    token = authorization.split(" ")[1]    
+    token = authorization.split(" ")[1]  
     user_id = validate_access_token(token_jwt=token)
 
     if not user_id:

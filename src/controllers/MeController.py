@@ -9,7 +9,7 @@ from ..utils.http import ok
 
 class MeController:
 
-    def __init__(self, session: Optional[AsyncSession]):
+    def __init__(self, session: Optional[AsyncSession] = None):
         self.session = session or get_db
 
     async def handle(self, data: ProtectedHttpRequest):

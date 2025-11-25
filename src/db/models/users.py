@@ -12,14 +12,10 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(200), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(LargeBinary)
 
-    def __init__(self, name, email, password):
-        self.name = name
-        self.email = email
-        self.password = password
-
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
             "email": self.email,
         }
+        

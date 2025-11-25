@@ -18,7 +18,7 @@ class EventSchema(BaseModel):
 
 class SigninController:
 
-    def __init__(self, session: Optional[AsyncSession]):
+    def __init__(self, session: Optional[AsyncSession] = None):
         self.session = session or get_db
 
     def _validate_body(self, body: Dict[str, AnyStr]) -> EventSchema:
