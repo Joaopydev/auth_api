@@ -1,8 +1,11 @@
 import pytest
 import bcrypt
+
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+
 from src.db.models.base import Base
 from src.db.models.users import User
+from src.controllers.SigninController import SigninController
 
 
 @pytest.fixture
@@ -49,3 +52,17 @@ async def test_user(test_session_db):
     await test_session_db.refresh(user)
 
     return user
+
+
+@pytest.fixture
+async def test_login_user(test_session_db, test_user):
+    request_body = {
+        "email": "joao@gmail.com",
+        "password": "password",
+    }
+
+    controller = SigninController(session=lambda: test_session_db)
+
+    result = await controller.handle(body=request_body)
+
+    return result["body"].get("access_token", "")
