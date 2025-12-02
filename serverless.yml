@@ -11,6 +11,7 @@ provider:
     SECRET_JWT_PRIVATE_KEY: ${env:SECRET_JWT_PRIVATE_KEY}
     SECRET_JWT_PUBLIC_KEY: ${env:SECRET_JWT_PUBLIC_KEY}
     BUCKET_NAME: !Ref UploadsBucket
+    MEALS_QUEUE_URL: !Ref MealsQueue
 
   # ecr:
   #   images:
@@ -87,6 +88,15 @@ functions:
       - httpApi:
           path: /meals/{meal_id}
           method: GET
+  
+  fileUploadEvent:
+    handler: src/functions/file_upload_event.handler
+    events:
+      - s3:
+          bucket: !Ref UploadsBucket
+          event: s3:ObjectCreated:*
+          existing: true
+          forceDeploy: true
             
 resources:
   Resources:
@@ -94,6 +104,21 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
           BucketName: server-uploads-service
+    
+    MealsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: meals-queue-service
+        VisibilityTimeout: 60
+        RedrivePolicy:
+          maxReceiveCount: 1
+          deadLetterTargetArn: !GetAtt MealsDLQ.Arn
+
+    MealsDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: meals-queue-dlq-service
+
           
 # Resources:
 #   MyEcrRepository:
