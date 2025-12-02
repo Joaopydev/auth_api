@@ -67,6 +67,26 @@ functions:
       - httpApi:
           path: /meals
           method: POST
+
+  listMeals:
+    image:
+      uri: 553004107808.dkr.ecr.us-east-1.amazonaws.com/lambda-container:latest
+      command:
+        - src.functions.list_meals.handler
+    events:
+      - httpApi:
+          path: /meals
+          method: GET
+
+  getMealById:
+    image:
+      uri: 553004107808.dkr.ecr.us-east-1.amazonaws.com/lambda-container:latest
+      command:
+        - src.functions.get_meal_by_id.handler
+    events:
+      - httpApi:
+          path: /meals/{meal_id}
+          method: GET
             
 resources:
   Resources:

@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Dict, Any
 import uuid
 from enum import Enum
 
@@ -49,3 +50,14 @@ class Meal(Base):
         index=True,
         default=lambda: datetime.now(timezone.utc)
     )
+
+    @property
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "status": self.status.value,
+            "name": self.name,
+            "icon": self.icon,
+            "foods": self.foods,
+            "created_at": self.created_at.isoformat(),
+        }
