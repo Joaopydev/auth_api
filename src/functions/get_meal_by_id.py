@@ -28,6 +28,7 @@ async def async_handler(event: Dict[str, Any], content: Dict[str, Any]) -> HTTPR
     except Exception as e:
         response = unauthorized(body={"error": str(e)})
     finally:
+        print("Lambda returns:", response)
         return parse_response(response=response)
 
 
