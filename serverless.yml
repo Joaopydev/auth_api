@@ -25,13 +25,6 @@ provider:
         - Effect: Allow
           Action: sqs:SendMessage
           Resource: !GetAtt MealsQueue.Arn
-  # ecr:
-  #   images:
-  #     app-image:
-  #       path: ./
-  #       file: Dockerfile
-  #       provenance: false
-  #       platform: linux/amd64
 
 package:
   individually: true
@@ -46,6 +39,7 @@ functions:
       - httpApi:
           path: /signin
           method: POST
+
   signup:
     image:
       uri: ${env:ECR_IMAGE_URI}
@@ -139,13 +133,3 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: meals-queue-dlq-service
-
-          
-# Resources:
-#   MyEcrRepository:
-#     Type: AWS::ECR::Repository
-#     Properties:
-#       RepositoryName: lambda-container
-#       ImageScanningConfiguration:
-#         ScanOnPush: true
-#       ImageTagMutability: MUTABLE

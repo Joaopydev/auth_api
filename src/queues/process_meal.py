@@ -10,7 +10,12 @@ from ..services.ai import AIClient
 
 class ProcessMeal:
 
-    def __init__(self, meal_repository: MealRepository, storage_service: StorageService, ai_client: AIClient):
+    def __init__(
+        self,
+        meal_repository: MealRepository,
+        storage_service: StorageService,
+        ai_client: AIClient,
+    ):
         self.meal_repository = meal_repository
         self.storage_service = storage_service
         self.ai_client = ai_client

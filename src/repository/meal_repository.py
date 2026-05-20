@@ -55,10 +55,7 @@ class MealRepository:
         async with self.db_session() as db:
             query = select(Meal).where(
                 Meal.user_id == user_id,
-                Meal.status.in_([
-                    Meal.status == MealStatus.success,
-                    Meal.status == MealStatus.processing,
-                ]),
+                Meal.status == MealStatus.success,
                 Meal.created_at >= start_date,
                 Meal.created_at <= end_date,
             )

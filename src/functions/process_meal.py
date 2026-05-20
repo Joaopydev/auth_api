@@ -12,14 +12,13 @@ async def async_handler(event) -> None:
     process_meal = ProcessMeal(
         meal_repository=MealRepository(db_session=get_db),
         storage_service=StorageService(),
-        ai_client=AIClient()
+        ai_client=AIClient(),
     )
     tasks = [
         process_meal.process(file_key=json.loads(record["body"])["file_key"])
         for record in event["Records"]
     ]
     await asyncio.gather(*tasks)
-
 
 def handler(event, _) -> None:
     asyncio.run(async_handler(event=event))
