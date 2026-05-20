@@ -56,7 +56,7 @@ class Meal(Base):
         return {
             "id": self.id,
             "name": self.name,
-            "status": self.status,
+            "status": self.status.value,
             "icon": self.icon,
             "foods": self.foods,
             "createdAt": self.created_at.isoformat(),
