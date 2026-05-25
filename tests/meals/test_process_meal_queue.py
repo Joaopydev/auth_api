@@ -46,6 +46,11 @@ async def test_should_process_audio_meal_successfully():
 
     storage_service_mock = Mock()
     storage_service_mock.read_object_content = AsyncMock(return_value=b"fake-audio")
+    storage_service_mock.head_object = AsyncMock(return_value={
+        "Metadata": {
+            "timezone": "America/Sao_Paulo"
+        }
+    })
 
     ai_client_mock = Mock()
     ai_client_mock.transcribe_audio = AsyncMock(
@@ -65,6 +70,9 @@ async def test_should_process_audio_meal_successfully():
         meal_id=meal_mock.id,
         new_status=MealStatus.processing
     )
+
+    storage_service_mock.head_object.assert_awaited_once()
+    storage_service_mock.read_object_content.assert_awaited_once()
 
     ai_client_mock.transcribe_audio.assert_awaited_once()
     ai_client_mock.get_meal_details_from_text.assert_awaited_once()
@@ -95,6 +103,12 @@ async def test_should_process_picture_meal_successfully():
 
     storage_service_mock = Mock()
     storage_service_mock.get_download_url = Mock(return_value="https://fake-url.com/image.jpg")
+    storage_service_mock.head_object = AsyncMock(return_value={
+        "Metadata": {
+            "timezone": "America/Sao_Paulo"
+        }
+    })
+
 
     ai_client_mock = Mock()
     ai_client_mock.get_meal_details_from_image = AsyncMock(return_value=json.dumps(MEAL_DETAILS_MOCK))
@@ -113,6 +127,7 @@ async def test_should_process_picture_meal_successfully():
         new_status=MealStatus.processing
     )
 
+    storage_service_mock.head_object.assert_awaited_once()
     storage_service_mock.get_download_url.assert_called_once_with(meal_mock.input_file_key)
     ai_client_mock.get_meal_details_from_image.assert_awaited_once()
 
@@ -141,6 +156,12 @@ async def test_should_failed_to_process_meal():
 
     storage_service_mock = Mock()
     storage_service_mock.read_object_content = AsyncMock(return_value=b"fake-audio")
+    storage_service_mock.head_object = AsyncMock(return_value={
+        "Metadata": {
+            "timezone": "America/Sao_Paulo"
+        }
+    })
+
 
     ai_client_mock = Mock()
     ai_client_mock.transcribe_audio = AsyncMock(side_effect=Exception("AI service error"))
@@ -158,6 +179,7 @@ async def test_should_failed_to_process_meal():
         new_status=MealStatus.processing
     )
 
+    storage_service_mock.head_object.assert_awaited_once_with(key=meal_mock.input_file_key)
     storage_service_mock.read_object_content.assert_awaited_once_with(key=meal_mock.input_file_key)
     ai_client_mock.transcribe_audio.assert_awaited_once()
 
