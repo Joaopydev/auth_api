@@ -58,7 +58,7 @@ class MealRepository:
                 Meal.status == MealStatus.success,
                 Meal.created_at >= start_date,
                 Meal.created_at <= end_date,
-            )
+            ).order_by(Meal.created_at)
             result = await db.execute(query)
             meals = result.scalars().all()
             return meals
