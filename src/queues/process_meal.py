@@ -1,5 +1,6 @@
 import json
 import logging
+from zoneinfo import ZoneInfo
 
 from ..db.models.meals import MealStatus
 from ..utils.http import bad_request
@@ -35,6 +36,9 @@ class ProcessMeal:
         )
         try:
             meal_details = ""
+            head_object = await self.storage_service.head_object(key=meal.input_file_key)
+            timezone = head_object["Metadata"].get("timezone", "UTC")
+            meal_created_at = meal.created_at.astimezone(ZoneInfo(timezone))
             if meal.input_type.value == "audio":
                 audio_data = await self.storage_service.read_object_content(key=meal.input_file_key)
                 transcription = await self.ai_client.transcribe_audio(
@@ -43,13 +47,13 @@ class ProcessMeal:
                 )
                 meal_details = await self.ai_client.get_meal_details_from_text(
                     input=transcription,
-                    created_at=meal.created_at
+                    created_at=meal_created_at,
                 )
             elif meal.input_type.value == "picture":
-                image_url = self.storage_service.get_download_url(file_key)
+                image_url = self.storage_service.get_download_url(meal.input_file_key)
                 meal_details = await self.ai_client.get_meal_details_from_image(
                     image_url=image_url,
-                    created_at=meal.created_at,
+                    created_at=meal_created_at,
                 )
                 
             parse_meal_details = json.loads(meal_details)

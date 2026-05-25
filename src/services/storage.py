@@ -26,12 +26,15 @@ class StorageService:
         )
     
     @classmethod
-    def get_upload_url(cls, file_key: str, content_type: str, expires_in: int = 600) -> str:
+    def get_upload_url(cls, file_key: str, content_type: str, timezone: str, expires_in: int = 600) -> str:
         """Content-Type is required to get pre-signed url for upload"""
         params = {
             "Bucket": os.getenv("BUCKET_NAME"),
             "Key": file_key,
-            "ContentType": content_type
+            "ContentType": content_type,
+            "Metadata": {
+                "timezone": timezone
+            }
         }
         return cls._get_presigned_url(
             method_type="put_object",
@@ -64,3 +67,17 @@ class StorageService:
                 return await async_streaming_body.read()  # Read the content of the streaming body
         except ClientError as e:
             raise RuntimeError(f"Failed to fetch object in s3: {e}") from e
+        
+    @classmethod
+    async def head_object(cls, key: str) -> dict:
+        try:
+            async with get_async_s3_client() as s3_client:
+                return await s3_client.head_object(
+                    Bucket=os.getenv("BUCKET_NAME"),
+                    Key=key
+                )
+
+        except ClientError as e:
+            raise RuntimeError(
+                f"Failed to head object in s3: {e}"
+            ) from e

@@ -16,6 +16,7 @@ class FileType(StrEnum):
 
 class CreateMealSchema(BaseModel):
     fileType: FileType
+    timezone: str
     
 
 class CreateMealController:
@@ -45,7 +46,8 @@ class CreateMealController:
         
         presigned_url = self.storage_service.get_upload_url(
             file_key=file_key,
-            content_type=schema.fileType.value
+            content_type=schema.fileType.value,
+            timezone=schema.timezone
         )
 
         meal = await self.meal_repository.create_meal(
