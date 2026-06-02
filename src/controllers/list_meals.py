@@ -22,7 +22,6 @@ class ListMealController:
     async def handle(self, request: ProtectedHttpRequest) -> HTTPResponse:
         try:
             query_event = self._validate_query_params(query_params=request.get("query_params"))
-            print("Query Params:", query_event.model_dump())
         except ValidationError as ex:
             return bad_request(body={"errors": ex.errors()})
         

@@ -7,6 +7,7 @@ from ..utils.http import bad_request, created
 from ..app_types.http import HTTPResponse, ProtectedHttpRequest
 from ..repository.meal_repository import MealRepository
 from ..services.storage.storage_service import StorageService
+from ..observability.logger import logger
 
 
 class FileType(StrEnum):
@@ -56,4 +57,11 @@ class CreateMealController:
             file_type=schema.fileType.value,
         )
 
+        logger.info(
+            "Meal created",
+            extra={
+                "meal_id": meal.id,
+                "file_type": schema.fileType.value,
+            }
+        )
         return created(body={"meal": meal.id, "presignedUrl": presigned_url})
