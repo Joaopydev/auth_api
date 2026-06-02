@@ -6,6 +6,8 @@ from openai import AsyncOpenAI
 from ..prompts.get_image_prompt import get_image_prompt
 from ..prompts.get_text_prompt import get_text_prompt
 
+from ....observability.logger import logger
+
 class AIClient:
 
     def __init__(self):
@@ -17,6 +19,12 @@ class AIClient:
         key: str
     ) -> str:
         try:
+            logger.info(
+                msg="Starting audio transcription",
+                extra={
+                    "file_key": key
+                }
+            )
             audio_file = io.BytesIO(audio_data)
             audio_file.name = key.split('/')[-1]
 
@@ -24,20 +32,40 @@ class AIClient:
                 file=audio_file,
                 model="whisper-1"
             )
+
+            logger.info(
+                msg="Audio transcription completed",
+                extra={
+                    "file_key": key
+                }
+            )
             return transcript.text
         except Exception as e:
-            raise RuntimeError(f"Audio transcription failed ({e})")
+            logger.exception(
+                msg="Audio transcription failed",
+                extra={
+                    "file_key": key,
+                }
+            )
+            raise
         
     async def get_meal_details_from_text(
         self,
         input: str,
         created_at: datetime,
+        file_key: str
     ) -> str:
         user_input = f"""
             Date: {created_at}
             Meal: {input}
         """
         try:
+            logger.info(
+                msg="Starting meal details extraction from text",
+                extra={
+                    "file_key": file_key
+                }
+            )
             response = await self.client.chat.completions.create(
                 model="gpt-4.1-mini",
                 messages=[
@@ -51,16 +79,36 @@ class AIClient:
                     }
                 ]
             )
+            logger.info(
+                msg="Meal details extraction from text completed",
+                extra={
+                    "file_key": file_key
+                }
+            )
             return response.choices[0].message.content
         except Exception as e:
-            raise RuntimeError(f"Failed to process meal details by text ({e})")
-    
+            logger.exception(
+                msg="Meal details extraction from text failed",
+                extra={
+                    "file_key": file_key,
+                }
+            )
+            raise
+
     async def get_meal_details_from_image(
         self,
         image_url: str,
-        created_at: datetime
+        created_at: datetime,
+        file_key: str
     ) -> str:
         try:
+            logger.info(
+                msg="Starting meal details extraction from image",
+                extra={
+                    "file_key": file_key
+                }
+            )
+
             response = await self.client.chat.completions.create(
                 model="gpt-4.1-mini",
                 messages=[
@@ -81,6 +129,19 @@ class AIClient:
                     }
                 ]
             )
+            
+            logger.info(
+                msg="Meal details extraction from image completed",
+                extra={
+                    "file_key": file_key
+                }
+            )
             return response.choices[0].message.content
-        except Exception as e:
-            raise RuntimeError(f"Failed to process meal by image ({e})")
+        except Exception:
+            logger.exception(
+                msg="Meal details extraction from image failed",
+                extra={
+                    "file_key": file_key
+                }
+            )
+            raise 
