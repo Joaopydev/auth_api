@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from typing import Dict, Any
 
 from ..utils.parse_protected_event import parse_protected_event
@@ -11,7 +10,7 @@ from ..exceptions.AccessTokenNotProvided import AccessTokenNotProvided
 from ..exceptions.InvalidAccessToken import InvalidAccessToken
 from ..controllers.create_meal import CreateMealController
 
-from ..services.storage import StorageService
+from ..services.storage.storage_service import StorageService
 from ..repository.meal_repository import MealRepository
 from ..db.connection import get_db
 

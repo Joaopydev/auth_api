@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
 from src.db.models.base import Base
-from src.services.hashed_service import HashedPasswordService
+from src.services.hashed.hashed_service import HashedPasswordService
 from src.controllers.signin import SigninController
 
 from src.repository.user_repository import UserRepository

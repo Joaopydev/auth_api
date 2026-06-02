@@ -7,7 +7,7 @@ from ..app_types.http import HTTPResponse
 from ..utils.http import created, bad_request, conflict
 
 from ..repository.user_repository import UserRepository
-from ..services.hashed_service import HashedPasswordService
+from ..services.hashed.hashed_service import HashedPasswordService
 
 from ..db.models.users import GenderType, GoalType
 from ..lib.goal_calculator import calculate_goals, CalculateGoalsParams

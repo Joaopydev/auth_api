@@ -5,8 +5,8 @@ from zoneinfo import ZoneInfo
 from ..db.models.meals import MealStatus
 from ..utils.http import bad_request
 from ..repository.meal_repository import MealRepository
-from ..services.storage import StorageService
-from ..services.ai import AIClient
+from ..services.storage.storage_service import StorageService
+from ..services.ai.ai_service.ai_client import AIClient
 
 
 class ProcessMeal:

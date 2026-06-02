@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import Mock, AsyncMock
 
 from src.controllers.signin import SigninController
-from src.services.hashed_service import HashedPasswordService
+from src.services.hashed.hashed_service import HashedPasswordService
 from src.repository.user_repository import UserRepository
 
 

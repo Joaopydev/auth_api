@@ -6,7 +6,7 @@ from pydantic import BaseModel, ValidationError
 from ..utils.http import bad_request, created
 from ..app_types.http import HTTPResponse, ProtectedHttpRequest
 from ..repository.meal_repository import MealRepository
-from ..services.storage import StorageService
+from ..services.storage.storage_service import StorageService
 
 
 class FileType(StrEnum):

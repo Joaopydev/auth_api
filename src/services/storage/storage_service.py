@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from aiobotocore.response import StreamingBody
 from botocore.exceptions import ClientError
 
-from ..clients.s3_client import get_async_s3_client, sync_s3_client
+from ...clients.s3_client import get_async_s3_client, sync_s3_client
 
 
 load_dotenv()

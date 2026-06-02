@@ -3,8 +3,8 @@ import asyncio
 
 from ..queues.process_meal import ProcessMeal
 from ..repository.meal_repository import MealRepository
-from ..services.ai import AIClient
-from ..services.storage import StorageService
+from ..services.ai.ai_service.ai_client import AIClient
+from ..services.storage.storage_service import StorageService
 from ..db.connection import get_db
 
 

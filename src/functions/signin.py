@@ -7,7 +7,7 @@ from ..utils.parse_event import parse_event
 from ..utils.parse_response import parse_response
 
 from ..repository.user_repository import UserRepository
-from ..services.hashed_service import HashedPasswordService
+from ..services.hashed.hashed_service import HashedPasswordService
 from ..db.connection import get_db
 
 

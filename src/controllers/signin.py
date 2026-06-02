@@ -6,7 +6,7 @@ from ..app_types.http import HTTPResponse
 from ..utils.http import ok, bad_request, unauthorized
 
 from ..repository.user_repository import UserRepository
-from ..services.hashed_service import HashedPasswordService
+from ..services.hashed.hashed_service import HashedPasswordService
 
 
 class EventSchema(BaseModel):

@@ -2,7 +2,7 @@ import pytest
 
 from src.controllers.signup import SignupController
 from src.repository.user_repository import UserRepository
-from src.services.hashed_service import HashedPasswordService
+from src.services.hashed.hashed_service import HashedPasswordService
 
 
 @pytest.mark.asyncio
