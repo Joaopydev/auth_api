@@ -52,7 +52,6 @@ class ProcessMeal:
             meal_details = ""
             head_object = await self.storage_service.head_object(key=meal.input_file_key)
             timezone = head_object["Metadata"].get("timezone", "UTC")
-            logger.info("Timezone from metadata:", extra={"timezone": timezone})
             meal_created_at = meal.created_at.astimezone(ZoneInfo(timezone))
             if meal.input_type.value == "audio":
                 audio_data = await self.storage_service.read_object_content(key=meal.input_file_key)
