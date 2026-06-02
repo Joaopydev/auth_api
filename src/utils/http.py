@@ -34,3 +34,17 @@ def unauthorized(body: Dict[str, Any]):
         "statusCode": 401,
         "body": body
     }
+
+
+def internal_server_error(body: Dict[str, Any]) -> HTTPResponse:
+    return {
+        "statusCode": 500,
+        "body": body,
+    }
+
+
+def not_found(body: Dict[str, Any]) -> HTTPResponse:
+    return {
+        "statusCode": 404,
+        "body": body,
+    }
